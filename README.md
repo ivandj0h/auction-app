@@ -23,7 +23,7 @@ To build this app I used the following technologies:
 - [TypeScript](https://www.typescriptlang.org/) is a superset of JavaScript that adds types to the language, it's used to build large scale applications.
 - [TailwindCSS](https://tailwindcss.com/) is a utility-first CSS framework that allows you to build custom designs without leaving your HTML.
 - [Prisma](https://www.prisma.io/) is an ORM that allows you to interact with your database using a type-safe API.
-- [PostgreSQL](https://www.postgresql.org/) is a relational database management system that is used to store the data of the application.
+- [SQLite](https://www.sqlite.org/) is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine.
 - [Docker](https://www.docker.com/) is a tool that allows you to create containers for your applications, it's used to create the development environment for the application.
 - [GitHub](https://github.com) is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere.
 
@@ -57,28 +57,52 @@ yarn install
 npm install
 ```
 
-4. Create a `.env` file in the root of the project and add the following environment variables:
+### Running the application
+
+There are 2 ways to run the application:
+- Using [Docker](https://www.docker.com/)
+- Using Standard [NextJS](https://nextjs.org/) commands
+
+1. #### Using Docker
+if you choose to run this App using Docker you have to make sure that you have Docker installed on your machine, then you can run the following command to start the application:
 
 ```bash
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/auction-app"
+docker-compose up
 ```
+and next step is openning the browser and navigate to http://localhost:8000
 
-5. Start the development server:
+
+2. #### Using Standard NextJS commands  
+
+if you choose to run this App using Standard NextJS commands you have to make sure that you have NodeJS installed on your machine, then you can run the following command to start the application:
+
+```bash
+cd auction-app
+```
 
 ```bash
 yarn dev
-# or
-npm run dev
 ```
+and next step is openning the browser and navigate to http://localhost:8000
 
-6. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+
+
 
 ### Usage
 
 To use the application you have to register first, then you can login to the application and start creating auctions and bidding on them.
 
-### Screenshot
-...
+### Screenshot  
+
+- Login Page  
+
+![Screenshot](./public/assets/images/login.png)
+
+- Register Page  
+
+![Screenshot](./public/assets/images/register.png)
+
 
 ### Contribute
 [ivandjoh](https://linkedin.com/in/ivandjoh)
