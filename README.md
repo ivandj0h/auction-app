@@ -5,12 +5,12 @@
 
 ### Table of Contents  
 
-* [Description](#description)
-* [Technologies](#technologies)
-* [Installation](#installation)
-* [Usage](#usage)
-* [Screenshot](#screenshoot)
-* [Contribute](#contribute)
+* Description
+* Technologies
+* Installation
+* Usage
+* Screenshot
+* Contribute
 
 ### Description  
 
