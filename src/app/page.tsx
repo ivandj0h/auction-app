@@ -1,12 +1,13 @@
-import React, {JSX} from "react";
-import LoginPage from "@/app/(auth)/login/page";
+import Header from "@/components/Header";
+import LoginForm from "@/app/login/login-form";
 
-const HomePage: React.FC = (): JSX.Element => {
-    return (
-        <main className="relative items-center justify-center min-h-screen overflow-hidden bg-gray-100">
-            <LoginPage/>
-        </main>
-    )
+export default function Home() {
+  return (
+    <>
+      <Header />
+      <section className="bg-gray-100 min-h-screen pt-52">
+        <LoginForm />
+      </section>
+    </>
+  );
 }
-
-export default HomePage;

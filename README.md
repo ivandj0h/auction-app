@@ -1,25 +1,15 @@
 # Auction App
 
-
 ## Getting Started
-
-### Table of Contents  
-
-* Description
-* Technologies
-* Installation
-* Usage
-* Screenshot
-* Contribute
 
 ### Description  
 
-This is a simple auction app that allows users to create auctions and bid on them, the users can register and login to the app and they can deposit their money to their account and use it to bid on the auctions. 
+This is a simple auction app that allows users to create auctions and bid on them, the users can register and login to the app, and they can deposit their money to their account and use it to bid on the auctions. 
 
 ### Technologies
 
 To build this app I used the following technologies:
-- [NextJS](https://nextjs.org/) is a framework that builds on top of ReactJS and it's used to build server-side rendered applications, it can be used to build fullstack applications.
+- [NextJS](https://nextjs.org/) is a framework that builds on top of ReactJS, and it's used to build server-side rendered applications, it can be used to build fullstack applications.
 - [TypeScript](https://www.typescriptlang.org/) is a superset of JavaScript that adds types to the language, it's used to build large scale applications.
 - [TailwindCSS](https://tailwindcss.com/) is a utility-first CSS framework that allows you to build custom designs without leaving your HTML.
 - [Prisma](https://www.prisma.io/) is an ORM that allows you to interact with your database using a type-safe API.
@@ -37,19 +27,19 @@ To before you Install  the application you have to make sure that you already ha
 
 if you have all of the above installed on your machine you can follow the following steps to install the application:
 
-1. Clone the repository to your machine using the following command:
+- Clone the repository to your machine using the following command:
 
 ```bash
 git clone https://github.com/ivandi1980/auction-app.git
 ```
 
-2. Navigate to the project directory:
+- Navigate to the project directory:
 
 ```bash
 cd auction-app
 ```
 
-3. Install the dependencies:
+- Install the dependencies:
 
 ```bash
 yarn install
@@ -63,7 +53,7 @@ There are 2 ways to run the application:
 - Using [Docker](https://www.docker.com/)
 - Using Standard [NextJS](https://nextjs.org/) commands
 
-1. #### Using Docker
+#### Using Docker
 if you choose to run this App using Docker you have to make sure that you have Docker installed on your machine, then you can run the following command to start the application:
 
 ```bash
@@ -72,7 +62,7 @@ docker-compose up
 and next step is openning the browser and navigate to http://localhost:8000
 
 
-2. #### Using Standard NextJS commands  
+#### Using Standard NextJS commands  
 
 if you choose to run this App using Standard NextJS commands you have to make sure that you have NodeJS installed on your machine, then you can run the following command to start the application:
 
@@ -91,7 +81,7 @@ and next step is openning the browser and navigate to http://localhost:8000
 
 ### Usage
 
-To use the application you have to register first, then you can login to the application and start creating auctions and bidding on them.
+To use the application you have to `register` first, then you can `log in` to the application and start creating auctions and bidding on them.
 
 ### Screenshot  
 
