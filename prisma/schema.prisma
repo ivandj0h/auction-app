@@ -9,19 +9,29 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
+  name     String?
   password String
-  posts Post[]
+  posts    Balance[]
+  Item     Item[]
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
+model Balance {
+  id        Int  @id @default(autoincrement())
+  amount    Int
+  author    User @relation(fields: [balanceId], references: [id])
+  balanceId Int
+}
+
+model Item {
+  id        Int       @id @default(autoincrement())
+  itemName  String?
+  status    String
+  duration  DateTime? @default(now())
+  published Boolean   @default(false)
+  author    User      @relation(fields: [itemId], references: [id])
+  itemId    Int
 }

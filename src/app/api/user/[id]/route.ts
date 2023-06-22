@@ -13,8 +13,8 @@ export async function GET(request: Request, { params }: { params: { id: number }
       }
     );
   }
-  const userPosts = await prisma.post.findMany({
-    where: { authorId: +params.id },
+  const userPosts = await prisma.item.findMany({
+    where: { itemId: +params.id },
     include: {
       author: {
         select: {
