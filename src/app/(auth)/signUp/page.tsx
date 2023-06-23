@@ -1,14 +1,23 @@
 "use client";
 
-import React, { useRef } from "react";
-import { useRouter } from "next/navigation";
-import TextBox from "@/components/TextBox";
-import Button from "@/components/Button";
+import React, {useContext, useRef} from "react";
+import {useRouter} from "next/navigation";
+import TextBox from "@/components/utils/TextBox";
+import Button from "@/components/utils/Button";
+import {toast, ToastContainer} from "react-toastify";
+import {SignUpContext} from "@/lib/hook/SignUpContext";
 
 const SignUpPage = () => {
     const emailRef = useRef("");
     const passRef = useRef("");
     const router = useRouter();
+    const {showSignUp} = useContext(SignUpContext);
+    const {setShowSignUp} = useContext(SignUpContext);
+
+    const handleLogin = () => {
+        setShowSignUp(false);
+    };
+
 
     const handleSignUp = async () => {
         try {
@@ -26,10 +35,9 @@ const SignUpPage = () => {
             });
 
             if (response.ok) {
-                // Redirect to the desired page after successful registration
+                toast.success("Account created successfully");
                 router.push("/dashboard");
             } else {
-                // Handle error response
                 console.error("Error signing up:", response.statusText);
             }
         } catch (error) {
@@ -56,7 +64,14 @@ const SignUpPage = () => {
                     <Button onClick={handleSignUp} className="mt-10">
                         Register
                     </Button>
+                    <span className="block mt-6 text-center text-gray-500">Already have an account?{" "}
+                        <a onClick={handleLogin} href="#" className="text-blue-600">Login Here</a>
+                    </span>
                 </div>
+                <ToastContainer
+                    position="top-center"
+                    autoClose={2000}
+                />
             </div>
         </div>
     );

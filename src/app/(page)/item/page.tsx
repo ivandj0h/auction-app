@@ -2,7 +2,7 @@
 
 import React, {useEffect, useState} from "react";
 import useRequireAuth from "@/lib/hook/useRequireAuth";
-import Spinner from "@/components/Spinner";
+import Spinner from "@/components/utils/Spinner";
 
 const ItemPage = () => {
     const { session, isLoading } = useRequireAuth();

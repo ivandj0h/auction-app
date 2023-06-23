@@ -1,5 +1,5 @@
-import { verifyJwt } from "@/lib/jwt";
-import prisma from "@/lib/prisma";
+import { verifyJwt } from "@/lib/token/jwt";
+import prisma from "@/lib/vendor/prisma";
 
 export async function GET(request: Request, { params }: { params: { id: number } }) {
   const accessToken = request.headers.get("authorization");
