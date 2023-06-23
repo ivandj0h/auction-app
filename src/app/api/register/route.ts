@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "@/lib/vendor/prisma";
 import bcrypt from "bcrypt";
 
 interface RequestBody {
@@ -8,6 +8,11 @@ interface RequestBody {
 
 export async function POST(request: Request) {
     const body: RequestBody = await request.json();
+
+    if (!body.email || !body.password) {
+        console.error("Email or password is empty");
+        return new Response(JSON.stringify({ error: "Email or password cannot be empty" }), {status: 400});
+    }
 
     const name = extractNameFromBody(body.email);
     const hashedPassword = await hashPassword(body.password);

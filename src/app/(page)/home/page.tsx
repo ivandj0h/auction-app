@@ -1,8 +1,8 @@
 "use client";
 
 import {useContext} from "react";
-import SignUpPage from "@/app/auth/signUp/page";
-import LoginPage from "@/app/auth/signIn/page";
+import SignUpPage from "@/app/(auth)/signUp/page";
+import LoginPage from "@/app/(auth)/signIn/page";
 import {SignUpContext} from "@/lib/hook/SignUpContext";
 
 

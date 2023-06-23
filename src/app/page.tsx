@@ -1,6 +1,6 @@
 import Home from "@/app/(page)/home/page";
 import {SignUpProvider} from "@/lib/hook/SignUpContext";
-import AppBar from "@/components/AppBar";
+import AppBar from "@/components/navigation/AppBar";
 
 
 
