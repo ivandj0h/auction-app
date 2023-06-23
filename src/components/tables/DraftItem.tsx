@@ -4,12 +4,19 @@ import {Item} from "@/lib/interface/Interface";
 
 
 async function fetchItems() {
-    const res = await fetch("http://localhost:3000/api/items");
+    const res = await fetch("http://localhost:3000/api/draft");
     const data = await res.json();
+
+    console.log("Response data:", data);
+    // Log the item IDs
+    data.forEach((item: Item) => {
+        console.log("Item ID:", item.author.name);
+    });
+
     return data;
 }
 
-export default function OnGoingTable() {
+export default function DraftItem() {
     const [showModal, setShowModal] = useState(false);
     const [currentItem, setCurrentItem] = useState<Item | null>(null);
     const [bidPrice, setBidPrice] = useState("");
@@ -45,7 +52,6 @@ export default function OnGoingTable() {
             itemDuration.includes(filterText.toLowerCase())
         );
     });
-
 
     const handlePublishClick = async (item: Item) => {
         // Assuming that your API expects an item ID to update the published status.
@@ -109,6 +115,25 @@ export default function OnGoingTable() {
             header: CustomHeader,
         },
         {
+            name: 'Publish',
+            cell: (row: Item) => (
+                row.author?.name === 'admin' && (
+                    <button
+                        className={`btn px-8 mb-4 mt-4 mr-12 ${row.published ? 'opacity-50 cursor-not-allowed' : ''}`} // add disabled styles here
+                        onClick={() => !row.published && handlePublishClick(row)} // prevent clicking when published
+                        disabled={row.published} // disable the button when published
+                    >
+                        Publish
+                    </button>
+                )
+            ),
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            header: CustomHeader,
+        },
+
+        {
             name: 'Bid',
             cell: (row: Item) => (
                 <button
@@ -125,9 +150,18 @@ export default function OnGoingTable() {
         },
     ];
 
+    const paginationOptions = {
+        rowsPerPageText: 'Items per page:',
+        rangeSeparatorText: 'of',
+        selectAllRowsItem: true,
+        selectAllRowsItemText: 'All',
+        selectAllRowsItemSelectable: false,
+        perPage: 5, // Number of items to show per page
+    };
+
 
     return (
-        <div className="my-4 p-4 border rounded-md">
+        <div className="my-4 p-4 border rounded-md w-[90%]">
             <input
                 type="text"
                 placeholder="Filter By Name"
@@ -135,13 +169,16 @@ export default function OnGoingTable() {
                 onChange={e => setFilterText(e.target.value)}
             />
             <DataTable
-                title="My Table"
+                title="Items Table"
                 columns={columns}
                 data={filteredItems}
                 pagination
+                paginationPerPage={paginationOptions.perPage}
+                paginationRowsPerPageOptions={[5, 10, 15, 20]} // Customize available rows per page options
+                paginationComponentOptions={paginationOptions}
             />
             {showModal ? (
-                <div className="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+                <div className="fixed z-10 inset-0 overflow-y-auto bor" aria-labelledby="modal-title" role="dialog"
                      aria-modal="true">
                     <div
                         className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">

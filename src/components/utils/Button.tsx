@@ -28,7 +28,7 @@ const Button = ({
     const getVariant = () => {
         switch (variant) {
             case "primary":
-                return "bg-violet-500 hover:bg-violet-700 text-white";
+                return "bg-blue-500 hover:bg-blue-600 text-white";
             case "danger":
                 return "bg-red-500 hover:bg-red-700 text-white ";
             case "success":
@@ -47,7 +47,7 @@ const Button = ({
                 return "bg-white text-violet-500 border border-violet-500 hover:text-white hover:bg-violet-700  ";
 
             default:
-                return "group relative w-full flex justify-center border border-transparent text-md font-medium rounded-3xl text-white bg-red-500 hover:bg-red-600 focus:outline-none";
+                return "group relative w-full flex justify-center border border-transparent text-md font-medium rounded-3xl text-white bg-blue-500 hover:bg-blue-600 focus:outline-none";
         }
     };
     return (

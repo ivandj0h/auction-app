@@ -18,11 +18,13 @@ CREATE TABLE "Balance" (
 CREATE TABLE "Item" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "itemName" TEXT,
-    "status" TEXT NOT NULL,
-    "duration" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    "status" TEXT NOT NULL DEFAULT 'draft',
+    "current_price" INTEGER NOT NULL DEFAULT 0,
+    "bid_price" INTEGER NOT NULL DEFAULT 0,
+    "duration" TEXT NOT NULL DEFAULT '1h3s',
     "published" BOOLEAN NOT NULL DEFAULT false,
-    "itemId" INTEGER NOT NULL,
-    CONSTRAINT "Item_itemId_fkey" FOREIGN KEY ("itemId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "itemId" INTEGER,
+    CONSTRAINT "Item_itemId_fkey" FOREIGN KEY ("itemId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateIndex
