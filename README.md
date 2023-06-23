@@ -87,12 +87,14 @@ To use the application you have to `register` first, then you can `log in` to th
 
 - Login Page
 
-![Screenshot](./public/assets/images/login.png)
+![Login](./public/assets/images/login.png)
 
 - Register Page
 
-![Screenshot](./public/assets/images/register.png)
+![Register](./public/assets/images/register.png)
 
+- Dashboard Page  
+![Dashboard](./public/assets/images/dashboard.png)
 
 ### Contribute
 [ivandjoh](https://linkedin.com/in/ivandjoh)

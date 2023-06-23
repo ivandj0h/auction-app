@@ -46,7 +46,7 @@ const DashboardPage = () => {
                 </button>
             </div>
             <div className="overflow-y-auto h-full">
-                {activeTab === 'Ongoing' && <OnGoingTable />}
+                {activeTab === 'Ongoing' && <OnGoingTable  />}
                 {activeTab === 'Complete' && (
                     <div className="w-full bg-aliceblue p-4 mt-4 rounded-md shadow-md">
                         <h1>Complete Content</h1>
