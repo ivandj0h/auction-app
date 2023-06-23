@@ -49,35 +49,34 @@ npm install
 
 ### Running the application
 
-There are 2 ways to run the application:
-- Using [Docker](https://www.docker.com/)
-- Using Standard [NextJS](https://nextjs.org/) commands
-
-#### Using Docker
-if you choose to run this App using Docker you have to make sure that you have Docker installed on your machine, then you can run the following command to start the application:
-
-```bash
-docker-compose up
-```
-and next step is openning the browser and navigate to http://localhost:8000
-
-
-#### Using Standard NextJS commands
-
-if you choose to run this App using Standard NextJS commands you have to make sure that you have NodeJS installed on your machine, then you can run the following command to start the application:
+First  you have to make sure that you have NodeJS installed on your machine, then you can run the following command to start the application:
 
 ```bash
 cd auction-app
 ```
 
 ```bash
-yarn dev
+yarn dev  
+# or
+npm run dev
 ```
 and next step is openning the browser and navigate to http://localhost:8000
 
+if you want to run using production mode, first you have to build the application using the following command:
 
+```bash
+yarn build  
+# or
+npm run build
+```
 
+then you can run the following command to start the application:
 
+```bash
+yarn start  
+# or
+npm run start
+```
 
 ### Usage
 

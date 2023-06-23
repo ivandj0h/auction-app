@@ -1,8 +1,6 @@
 import AppBar from "@/components/navigation/AppBar";
 import "./globals.css";
 import Providers from "@/lib/hook/Providers";
-import {ToastContainer} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 
 export const metadata = {
@@ -18,7 +16,6 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
             <AppBar/>
             {children}
         </Providers>
-        <ToastContainer/>
         </body>
         </html>
     );

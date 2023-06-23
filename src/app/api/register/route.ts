@@ -23,6 +23,14 @@ export async function POST(request: Request) {
                 email: body.email,
                 name: name,
                 password: hashedPassword,
+                balance: {
+                    create: {
+                        amount: 0,
+                    },
+                },
+            },
+            include: {
+                balance: true,
             },
         });
 

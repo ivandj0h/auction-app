@@ -3,9 +3,11 @@
 import React, {useEffect, useState} from "react";
 import useRequireAuth from "@/lib/hook/useRequireAuth";
 import Spinner from "@/components/utils/Spinner";
+import DepositInputComponent from "@/components/deposit/DepositInputComponent";
+import AppBar from "@/components/navigation/AppBar";
 
 const DepositPage = () => {
-    const { session, isLoading } = useRequireAuth();
+    const {session, isLoading} = useRequireAuth();
     const [showContent, setShowContent] = useState(false);
 
     useEffect(() => {
@@ -20,7 +22,7 @@ const DepositPage = () => {
         return (
             <div className="flex items-center justify-center h-screen">
                 <div className="flex items-center gap-3">
-                    <Spinner />
+                    <Spinner/>
                     <span className="text-slate-500 inline-block">Loading...</span>
                 </div>
             </div>
@@ -29,10 +31,8 @@ const DepositPage = () => {
 
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
-            <div className="relative items-center justify-center min-h-screen overflow-hidden">
-                <h1>Deposit Page</h1>
-            </div>
+        <main className="flex items-center justify-center min-h-screen">
+            <DepositInputComponent/>
         </main>
     )
 }

@@ -15,26 +15,25 @@ model User {
   email    String    @unique
   name     String?
   password String
-  posts    Balance[]
-  Item     Item[]
+  balance  Balance[] @relation("UserBalance")
+  items    Item[]    @relation("ItemAuthor")
 }
 
 model Balance {
   id        Int  @id @default(autoincrement())
   amount    Int
-  author    User @relation(fields: [balanceId], references: [id])
+  author    User @relation("UserBalance", fields: [balanceId], references: [id])
   balanceId Int
 }
 
 model Item {
-  id             Int       @id @default(autoincrement())
-  itemName       String?
-  status         String    @default("draft")
-  current_price  Int       @default(0)
-  bid_price      Int       @default(0)
-  start_duration DateTime? @default(now())
-  end_duration   DateTime? @default(now())
-  published      Boolean   @default(false)
-  author         User      @relation(fields: [itemId], references: [id])
-  itemId         Int
+  id            Int     @id @default(autoincrement())
+  itemName      String?
+  status        String  @default("draft")
+  current_price Int     @default(0)
+  bid_price     Int     @default(0)
+  duration      String  @default("1h3s")
+  published     Boolean @default(false)
+  author        User?   @relation(name: "ItemAuthor", fields: [itemId], references: [id])
+  itemId        Int?
 }

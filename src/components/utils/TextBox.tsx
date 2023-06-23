@@ -14,7 +14,7 @@ const TextBox = React.forwardRef<HTMLInputElement, IProps>(
                     <input
                         id="txt"
                         autoComplete="off"
-                        className={`appearance-none rounded-none relative block w-full py-1 px-1 border-b border-gray-300 placeholder-gray-300 text-gray-500 focus:outline-none focus:ring-amber-950 focus:border-amber-950 focus:z-10 sm:text-sm
+                        className={`appearance-none rounded-none relative block w-full py-6 px-1 border-b border-gray-300 placeholder-gray-300 text-gray-500 focus:outline-none focus:ring-amber-950 focus:border-amber-950 focus:z-10 sm:text-sm
               ${error && "border-red-500 border  animate-shake"} ${
                             children ? "rounded-r-md" : "rounded-md"
                         }`}

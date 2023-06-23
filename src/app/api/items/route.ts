@@ -1,4 +1,3 @@
-import {DateTime} from "next-auth/providers/kakao";
 import {NextResponse} from "next/server";
 import prisma from "@/lib/vendor/prisma";
 
@@ -9,7 +8,7 @@ type Balance = {
 
 type User = {
   name: string;
-  posts: Balance[];
+  balance: Balance[];
 };
 
 type Item = {
@@ -17,8 +16,7 @@ type Item = {
   status: string;
   current_price: number;
   bid_price: number;
-  start_duration: DateTime;
-  end_duration: DateTime;
+  duration: string;
   published: boolean;
   itemId: number;
   author: User;
@@ -35,14 +33,13 @@ export const GET = async (req: Request) => {
       status: true,
       current_price: true,
       bid_price: true,
-      start_duration: true,
-      end_duration: true,
+      duration: true,
       published: true,
       itemId: true,
       author: {
         select: {
           name: true,
-          posts: {
+          balance: {
             select: {
               amount: true
             }
@@ -58,11 +55,43 @@ export const GET = async (req: Request) => {
       ...item,
       author: item.author.name,
       itemName: item.itemName ? item.itemName : '',  // handle null
-      start_duration: item.start_duration instanceof Date ? item.start_duration.toISOString() : (item.start_duration ? item.start_duration : ''),  // handle Date and null
-      end_duration: item.end_duration instanceof Date ? item.end_duration.toISOString() : (item.end_duration ? item.end_duration : ''),  // handle Date and null
+      duration: item.duration ? item.duration : '',  // handle null ''),
     };
   });
 
 
   return NextResponse.json(formattedData, {status: 200});
 }
+
+// POST method
+export const POST = async (req: Request) => {
+  const body: any = await req.json();
+
+  const user = await prisma?.user.findUnique({
+    where: {
+      id: body.userId
+    },
+    include: {
+      items: true  // include Item records in the response
+    }
+  });
+
+  if (!user) {
+    return NextResponse.json({error: "User not found"}, {status: 404});
+  }
+
+    // If Item doesn't exist, create a new Item
+    const Item = await prisma?.item.create({
+      data: {
+        itemName: body.itemName,
+        status: "draft",
+        current_price: body.startPrice,
+        bid_price: 0,
+        duration: body.timeWindow,
+        published: false,
+        itemId: user.id,
+      }
+    });
+    return NextResponse.json(Item, {status: 200});
+}
+

@@ -9,7 +9,8 @@ export const PATCH = async (req: Request, {params}: {params: {id: number}}) => {
             id: parseInt(id.toString()) // Convert id to integer
         },
         data: {
-            published: true
+            published: true,
+            status: 'publish'
         }
     });
 

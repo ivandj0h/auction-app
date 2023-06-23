@@ -7,7 +7,7 @@ import AppBar from "@/components/navigation/AppBar";
 function App() {
     return (
         <SignUpProvider>
-            <AppBar />
+            {/*<AppBar />*/}
             <Home />
         </SignUpProvider>
     );
