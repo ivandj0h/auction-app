@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast, ToastContainer } from 'react-toastify';
-// import axios from "axios";
 import { useSession } from "next-auth/react";
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";

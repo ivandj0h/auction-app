@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
 import DataTable from 'react-data-table-component';
 import {Item} from "@/lib/interface/Interface";
+import {useSession} from "next-auth/react";
+import {useRouter} from "next/navigation";
 
 
 async function fetchItems() {
@@ -10,11 +12,13 @@ async function fetchItems() {
     console.log("Response data:", data);
     // Log the item IDs
     data.forEach((item: Item) => {
-        console.log("Item ID:", item.author.name);
+        console.log("Item ID:", item.author);
     });
 
     return data;
 }
+
+
 
 export default function DraftItem() {
     const [showModal, setShowModal] = useState(false);
@@ -22,10 +26,15 @@ export default function DraftItem() {
     const [bidPrice, setBidPrice] = useState("");
     const [items, setItems] = useState<Item[]>([]);
     const [filterText, setFilterText] = useState("");
+    const { data: session } = useSession();
+    const route = useRouter();
+
+    // console.log("Session:", session?.user.name);
 
     useEffect(() => {
         fetchItems().then(data => setItems(data));
     }, []);
+
 
     const handleBidClick = (item: Item) => {
         setCurrentItem(item);
@@ -54,6 +63,7 @@ export default function DraftItem() {
     });
 
     const handlePublishClick = async (item: Item) => {
+        console.log("id-item", item.id)
         // Assuming that your API expects an item ID to update the published status.
         const res = await fetch(`http://localhost:3000/api/items/${item.id}`, {
             method: 'PATCH',
@@ -65,15 +75,16 @@ export default function DraftItem() {
             }),
         });
 
-        const data = await res.json();
+        // const data = await res.json();
 
         // If the API call was successful, update the items state.
         if (res.ok) {
             setItems(prevItems =>
                 prevItems.map(i => (i.id === item.id ? { ...i, published: true } : i))
             );
+            route.push("/dashboard")
         } else {
-            console.error('Failed to publish item:', data);
+            console.error('Failed to publish item:', res.statusText);
         }
     };
 
@@ -86,6 +97,21 @@ export default function DraftItem() {
             </div>
         );
     };
+
+    const filteredItemss = items.filter(item => {
+        const itemDuration = item.duration ? item.duration.toString() : '';
+
+        const matchesFilterText = (
+            (item.itemName ? item.itemName.toLowerCase() : '').includes(filterText.toLowerCase()) ||
+            item.current_price.toString().includes(filterText.toLowerCase()) ||
+            itemDuration.includes(filterText.toLowerCase())
+        );
+
+        // @ts-ignore
+        const matchesAuthor = session?.user.name === item.author;
+
+        return matchesFilterText && matchesAuthor;
+    });
 
 
     const columns = [
@@ -117,30 +143,11 @@ export default function DraftItem() {
         {
             name: 'Publish',
             cell: (row: Item) => (
-                row.author?.name === 'admin' && (
-                    <button
-                        className={`btn px-8 mb-4 mt-4 mr-12 ${row.published ? 'opacity-50 cursor-not-allowed' : ''}`} // add disabled styles here
-                        onClick={() => !row.published && handlePublishClick(row)} // prevent clicking when published
-                        disabled={row.published} // disable the button when published
-                    >
-                        Publish
-                    </button>
-                )
-            ),
-            ignoreRowClick: true,
-            allowOverflow: true,
-            button: true,
-            header: CustomHeader,
-        },
-
-        {
-            name: 'Bid',
-            cell: (row: Item) => (
                 <button
-                    className="btn px-8 mb-4 mt-4"
-                    onClick={() => handleBidClick(row)}
+                    className={`btn px-8 mb-4 mt-4 mr-12`} // removed conditionally set classes
+                    onClick={() => handlePublishClick(row)} // removed conditional check for 'published' status
                 >
-                    Bid
+                    Publish
                 </button>
             ),
             ignoreRowClick: true,
@@ -148,6 +155,21 @@ export default function DraftItem() {
             button: true,
             header: CustomHeader,
         },
+        // {
+        //     name: 'Bid',
+        //     cell: (row: Item) => (
+        //         <button
+        //             className="btn px-8 mb-4 mt-4"
+        //             onClick={() => handleBidClick(row)}
+        //         >
+        //             Bid
+        //         </button>
+        //     ),
+        //     ignoreRowClick: true,
+        //     allowOverflow: true,
+        //     button: true,
+        //     header: CustomHeader,
+        // },
     ];
 
     const paginationOptions = {
@@ -169,9 +191,9 @@ export default function DraftItem() {
                 onChange={e => setFilterText(e.target.value)}
             />
             <DataTable
-                title="Items Table"
+                title="Draft Items"
                 columns={columns}
-                data={filteredItems}
+                data={filteredItemss}
                 pagination
                 paginationPerPage={paginationOptions.perPage}
                 paginationRowsPerPageOptions={[5, 10, 15, 20]} // Customize available rows per page options

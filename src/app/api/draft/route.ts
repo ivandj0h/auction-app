@@ -15,6 +15,7 @@ export const GET = async (req: Request) => {
             status: 'draft'
         },
         select: {
+            id: true,
             itemName: true,
             status: true,
             current_price: true,
