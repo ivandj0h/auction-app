@@ -1,20 +1,36 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import DataTable from 'react-data-table-component';
+import {calculateDuration} from "@/lib/utils/calculateDuration";
 
 interface Item {
-    itemName: string;
-    status: string;
-    duration: string;
+    id: string;
+    published: boolean;
+    itemName: string | null;  // modify this
+    current_price: number;
+    start_duration: string | Date | null;  // modify this
+    end_duration: string | Date | null;  // modify this
     bid: string;
+    author: string;
+    status: string;
 }
 
-interface Props {
-    data?: Item[];
+
+async function fetchItems() {
+    const res = await fetch("http://localhost:3000/api/items");
+    const data = await res.json();
+    return data;
 }
 
-const OnGoingTable: React.FC<Props> = ({data = []}) => {
+export default function OnGoingTable() {
     const [showModal, setShowModal] = useState(false);
     const [currentItem, setCurrentItem] = useState<Item | null>(null);
     const [bidPrice, setBidPrice] = useState("");
+    const [items, setItems] = useState<Item[]>([]);
+    const [filterText, setFilterText] = useState("");
+
+    useEffect(() => {
+        fetchItems().then(data => setItems(data));
+    }, []);
 
     const handleBidClick = (item: Item) => {
         setCurrentItem(item);
@@ -32,38 +48,136 @@ const OnGoingTable: React.FC<Props> = ({data = []}) => {
         handleModalClose();
     };
 
+    const filteredItems = items.filter(item => {
+        const itemDuration = calculateDuration(
+            item.start_duration ? item.start_duration.toString() : '',
+            item.end_duration ? item.end_duration.toString() : ''
+        );
+
+        return (
+            (item.itemName ? item.itemName.toLowerCase() : '').includes(filterText.toLowerCase()) ||
+            item.current_price.toString().includes(filterText.toLowerCase()) ||
+            itemDuration.includes(filterText.toLowerCase())
+        );
+    });
+
+
+    const handlePublishClick = async (item: Item) => {
+        // Assuming that your API expects an item ID to update the published status.
+        const res = await fetch(`http://localhost:3000/api/items/${item.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                published: true,
+            }),
+        });
+
+        const data = await res.json();
+
+        // If the API call was successful, update the items state.
+        if (res.ok) {
+            setItems(prevItems =>
+                prevItems.map(i => (i.id === item.id ? { ...i, published: true } : i))
+            );
+        } else {
+            console.error('Failed to publish item:', data);
+        }
+    };
+
+
+    // Custom Header Component
+    const CustomHeader = ({ column }: { column: any }) => {
+        return (
+            <div style={{ textAlign: 'center', fontWeight: 'bold' }}>
+                {column.name}
+            </div>
+        );
+    };
+
+
+    const columns = [
+        {
+            name: 'Name',
+            selector: (row: Item) => row.itemName || '', // If itemName is null, return an empty string instead
+            sortable: true,
+            header: CustomHeader,
+        },
+
+        {
+            name: 'Current Price',
+            selector: (row: Item) => `${new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(row.current_price)}`,
+            sortable: true,
+            right: false,
+            header: CustomHeader,
+        },
+        {
+            name: 'Duration',
+            selector: (row: Item) => {
+                const current_time = new Date().toISOString();
+                const start_duration = row.start_duration instanceof Date ? row.start_duration.toISOString() : row.start_duration ? row.start_duration : '';
+                const duration = calculateDuration(start_duration, current_time);
+                console.log(duration);
+                return duration;
+            },
+            sortable: true,
+            header: CustomHeader,
+        },
+
+        {
+            name: 'Publish',
+            cell: (row: Item) => (
+                row.author === 'admin' && (
+                    <button
+                        className={`btn px-8 mb-4 mt-4 mr-12 ${row.published ? 'opacity-50 cursor-not-allowed' : ''}`} // add disabled styles here
+                        onClick={() => !row.published && handlePublishClick(row)} // prevent clicking when published
+                        disabled={row.published} // disable the button when published
+                    >
+                        Publish
+                    </button>
+                )
+            ),
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            header: CustomHeader,
+        },
+        {
+            name: 'Bid',
+            cell: (row: Item) => (
+                <button
+                    className="btn px-8 mb-4 mt-4"
+                    onClick={() => handleBidClick(row)}
+                >
+                    Bid
+                </button>
+            ),
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            header: CustomHeader,
+        },
+    ];
+
+
     return (
         <div className="my-4 p-4 border rounded-md">
-            <div className="w-full">
-                <table className="table-auto w-full">
-                    <thead>
-                    <tr>
-                        <th className="px-4 py-2">Name</th>
-                        <th className="px-4 py-2">Current Price</th>
-                        <th className="px-4 py-2">Duration</th>
-                        <th className="px-4 py-2">Bid</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {data.map((item, index) => (
-                        <tr key={index}>
-                            <td className="border px-4 py-2">{item.itemName}</td>
-                            <td className="border px-4 py-2">{item.status}</td>
-                            <td className="border px-4 py-2">{item.duration}</td>
-                            <td className="border px-4 py-2">
-                                <button
-                                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                                    onClick={() => handleBidClick(item)}
-                                >
-                                    Bid
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
-            </div>
-
+            <input
+                type="text"
+                placeholder="Filter By Name"
+                value={filterText}
+                onChange={e => setFilterText(e.target.value)}
+            />
+            <DataTable
+                title="My Table"
+                columns={columns}
+                data={filteredItems}
+                pagination
+            />
             {showModal ? (
                 <div className="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
                      aria-modal="true">
@@ -110,6 +224,3 @@ const OnGoingTable: React.FC<Props> = ({data = []}) => {
         </div>
     );
 };
-
-
-export default OnGoingTable;
