@@ -135,7 +135,7 @@ export default function OnGoingTable() {
                 onChange={e => setFilterText(e.target.value)}
             />
             <DataTable
-                title="My Table"
+                title="On Going Auctions"
                 columns={columns}
                 data={filteredItems}
                 pagination
