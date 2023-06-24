@@ -14,7 +14,6 @@ To build this app I used the following technologies:
 - [TailwindCSS](https://tailwindcss.com/) is a utility-first CSS framework that allows you to build custom designs without leaving your HTML.
 - [Prisma](https://www.prisma.io/) is an ORM that allows you to interact with your database using a type-safe API.
 - [SQLite](https://www.sqlite.org/) is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine.
-- [Docker](https://www.docker.com/) is a tool that allows you to create containers for your applications, it's used to create the development environment for the application.
 - [GitHub](https://github.com) is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere.
 
 ### Installation
@@ -23,7 +22,6 @@ To before you Install  the application you have to make sure that you already ha
 
 - [NodeJS](https://nodejs.org/en/) is a JavaScript runtime built on Chrome's V8 JavaScript engine.
 - [Yarn](https://yarnpkg.com/) is a package manager for your code. It allows you to use and share code with other developers from around the world. or you can use [NPM](https://www.npmjs.com/) which is the default package manager for NodeJS.
-- [Docker](https://www.docker.com/) installed on your machine.
 
 if you have all of the above installed on your machine you can follow the following steps to install the application:
 

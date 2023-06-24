@@ -1,38 +1,18 @@
 "use client";
 
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import useRequireAuth from "@/lib/hook/useRequireAuth";
-import Spinner from "@/components/utils/Spinner";
 import ItemInputComponent from "@/components/item/ItemInputComponent";
 import DraftItem from "@/components/tables/DraftItem";
 import {AnimatePresence, motion} from "framer-motion";
 
 const ItemPage = () => {
     const {session, isLoading} = useRequireAuth();
-    const [showContent, setShowContent] = useState(false);
     const [isInputOpen, setIsInputOpen] = useState(false);
 
-    useEffect(() => {
-        if (isLoading) {
-            setTimeout(() => {
-                setShowContent(true);
-            }, 3000);
-        }
-    }, [isLoading]);
-
-    if (isLoading || !showContent) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <div className="flex items-center gap-3">
-                    <Spinner/>
-                    <span className="text-slate-500 inline-block">Loading...</span>
-                </div>
-            </div>
-        );
-    }
 
     return (
-        <main className="flex justify-center items-center min-h-screen px-4">
+        <main className="flex justify-center mt-40 w-full">
             <div className="w-full max-w-screen-lg">
                 <button
                     className="mb-2 p-2 h-12 w-48 rounded font-medium text-sm bg-blue-500 hover:bg-blue-600  text-white"

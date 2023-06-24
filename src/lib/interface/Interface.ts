@@ -18,6 +18,8 @@ export type Item = {
     status: string;
     current_price: number;
     bid_price: number;
+    start_time: Date;
+    end_time: Date;
     duration: string;
     published: boolean;
     itemId: number;

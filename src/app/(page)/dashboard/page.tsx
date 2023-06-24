@@ -1,33 +1,14 @@
 "use client"
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import useRequireAuth from "@/lib/hook/useRequireAuth";
-import Spinner from "@/components/utils/Spinner";
 import OnGoingTable from "@/components/tables/OnGoing";
 
 const DashboardPage = () => {
     const { session, isLoading } = useRequireAuth();
-    const [showContent, setShowContent] = useState(false);
     const [activeTab, setActiveTab] = useState('Ongoing');
 
-    useEffect(() => {
-        if (isLoading) {
-            setTimeout(() => {
-                setShowContent(true);
-            }, 3000);
-        }
-    }, [isLoading]);
-
-    if (isLoading || !showContent) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <div className="flex items-center gap-3">
-                    <Spinner />
-                    <span className="text-slate-500 inline-block">Loading...</span>
-                </div>
-            </div>
-        );
-    }
+  
 
     return (
         <main className="flex min-h-screen flex-col items-left p-24">
