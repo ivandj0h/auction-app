@@ -4,11 +4,13 @@ import { toast, ToastContainer } from 'react-toastify';
 import { useSession } from "next-auth/react";
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
+import {calculateDuration} from "@/lib/utils/calculateDuration";
 
 const ItemInputComponent: React.FC = () => {
     const [itemName, setItemName] = useState<string>('');
     const [startPrice, setStartPrice] = useState<string>('');
-    const [timeWindow, setTimeWindow] = useState<string>('');
+    const [startTime, setStartTime] = useState<string>('');
+    const [endTime, setEndTime] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const router = useRouter();
     const { data: session } = useSession();
@@ -26,8 +28,8 @@ const ItemInputComponent: React.FC = () => {
             return;
         }
 
-        if (!timeWindow) {
-            toast.error("Error: Time window is empty");
+        if (!startTime || !endTime) {
+            toast.error('Error: Invalid time window');
             return;
         }
 
@@ -42,17 +44,18 @@ const ItemInputComponent: React.FC = () => {
             const response = await axios.post("/api/items", {
                 itemName,
                 startPrice: Number(startPrice),
-                timeWindow,
+                timeWindow: calculateDuration(startTime, endTime),
                 userId: session.user.id,
             });
 
             // Simulating the API call with console.log
-            console.log({
-                itemName,
-                startPrice: Number(startPrice),
-                timeWindow,
-                userId: session.user.id,
-            });
+            // console.log({
+            //     itemName,
+            //     startPrice: Number(startPrice),
+            //     timeWindow: calculateDuration(startTime, endTime),
+            //     userId: session.user.id,
+            // });
+
 
             // Assuming status 200 for successful submission
             toast.success("Item added successfully");
@@ -85,13 +88,24 @@ const ItemInputComponent: React.FC = () => {
                             onChange={(e) => setStartPrice(e.target.value)}
                             className="h-12 w-full my-2 rounded border border-gray-300 px-3 focus:outline-none focus:ring-1 focus:ring-blue-500"
                         />
-                        <input
-                            type="text"
-                            placeholder={"Time Window"}
-                            value={timeWindow}
-                            onChange={(e) => setTimeWindow(e.target.value)}
-                            className="h-12 w-full my-2 rounded border border-gray-300 px-3 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
+                        <div className="flex space-x-4 my-2">
+                            <input
+                                type="datetime-local"
+                                placeholder="Start Time"
+                                value={startTime}
+                                onChange={(e) => setStartTime(e.target.value)}
+                                className="h-12 w-full rounded border border-gray-300 px-3 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            />
+                        </div>
+                        <div className="flex space-x-4 my-2">
+                            <input
+                                type="datetime-local"
+                                placeholder="End Time"
+                                value={endTime}
+                                onChange={(e) => setEndTime(e.target.value)}
+                                className="h-12 w-full rounded border border-gray-300 px-3 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            />
+                        </div>
                         <div className="flex space-x-4 mt-10 justify-end">
                             <button className="h-12 w-48 rounded font-medium text-sm bg-blue-500 text-white"
                                     type="submit" disabled={isLoading}>
