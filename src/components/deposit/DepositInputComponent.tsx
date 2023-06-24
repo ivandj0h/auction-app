@@ -71,7 +71,7 @@ const DepositInputComponent: React.FC = () => {
                             <button className="py-2 px-4 text-sm text-blue-500 font-medium" onClick={handleCancel}>
                                 Cancel
                             </button>
-                            <button className="h-12 w-48 rounded font-medium text-sm bg-blue-500 text-white"
+                            <button className="h-12 w-48 rounded font-medium text-sm bg-blue-500 hover:bg-blue-600  text-white"
                                     type="submit" disabled={isLoading}>
                                 {isLoading ? "Loading..." : "Deposit"}
                             </button>
