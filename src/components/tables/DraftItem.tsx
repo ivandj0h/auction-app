@@ -3,23 +3,30 @@ import DataTable from 'react-data-table-component';
 import {Item} from "@/lib/interface/Interface";
 import {useSession} from "next-auth/react";
 import {useRouter} from "next/navigation";
-import {FiCheck} from "react-icons/fi";
+import {paginationOptions} from "@/lib/utils/helpers";
+import TableItemColums from "@/lib/utils/TableItemColums";
+import Spinner from "@/components/utils/Spinner";
+import {toast} from "react-toastify";
+import { formatISO } from 'date-fns';
+import {calculateDuration} from "@/lib/utils/calculateDuration";
+
+
 
 async function fetchItems() {
     const res = await fetch("http://localhost:3000/api/draft");
     const data = await res.json();
 
-    console.log("Response data:", data);
+    // console.log("Response data:", data);
     // Log the item IDs
     data.forEach((item: Item) => {
-        console.log("Item ID:", item.author);
+        // console.log("Item ID:", item.author);
     });
 
     return data;
 }
 
 export default function DraftItem() {
-    const [showModal, setShowModal] = useState(false);
+    const [, setShowModal] = useState(false);
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const [currentItem, setCurrentItem] = useState<Item | null>(null);
     const [bidPrice, setBidPrice] = useState("");
@@ -27,16 +34,13 @@ export default function DraftItem() {
     const [filterText, setFilterText] = useState("");
     const {data: session} = useSession();
     const route = useRouter();
+    const [loading, setLoading] = useState(true);
+    const [startTime, setStartTime] = useState<string>('');
+    const [endTime, setEndTime] = useState<string>('');
 
-    const handleBidClick = (item: Item) => {
+    const handlePublishClick = (item: Item) => {
         setCurrentItem(item);
-        setShowModal(true);
-    };
-
-    const handleModalClose = () => {
-        setShowModal(false);
-        setCurrentItem(null);
-        setBidPrice("");
+        setShowConfirmationModal(true);
     };
 
     const handleConfirmationModalClose = () => {
@@ -69,22 +73,33 @@ export default function DraftItem() {
         }
     };
 
-    const handleConfirmationModalPublish = async (item: Item | null) => {
+    const handleConfirmationModalPublish = async (item: Item | null, startTime: string, endTime: string) => {
+        if (!startTime || !endTime) {
+            toast.error('Error: Invalid time window');
+            return;
+        }
+
         try {
             if (item) {
+                const formattedStartTime = formatISO(new Date(startTime), { representation: 'complete' });
+                const formattedEndTime = formatISO(new Date(endTime), { representation: 'complete' });
+                const timeWindow = calculateDuration(startTime, endTime)
+
                 const res = await fetch(`http://localhost:3000/api/items/${item.id}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        published: true,
+                        start_time: formattedStartTime,
+                        end_time: formattedEndTime,
+                        duration: timeWindow,
                     }),
                 });
 
                 if (res.ok) {
                     setItems(prevItems =>
-                        prevItems.map(i => (i.id === item.id ? { ...i, published: true } : i))
+                        prevItems.map(i => (i.id === item.id ? {...i, published: true} : i))
                     );
                     route.push("/dashboard");
                 } else {
@@ -98,23 +113,8 @@ export default function DraftItem() {
         setShowConfirmationModal(false);
     };
 
-
-
-    const handlePublishClick = (item: Item) => {
-        setCurrentItem(item);
-        setShowConfirmationModal(true);
-    };
-
     const handleModalConfirm = async () => {
         setShowConfirmationModal(false);
-    };
-
-    const CustomHeader = ({column}: { column: any }) => {
-        return (
-            <div style={{textAlign: 'center', fontWeight: 'bold'}}>
-                {column.name}
-            </div>
-        );
     };
 
     const filteredItems = items.filter(item => {
@@ -133,141 +133,96 @@ export default function DraftItem() {
         return matchesFilterText && matchesAuthor;
     });
 
-    const columns = [
-        {
-            name: 'Name',
-            selector: (row: Item) => row.itemName || '',
-            sortable: true,
-            header: CustomHeader,
-        },
-        {
-            name: 'Current Price',
-            selector: (row: Item) => `${new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD'
-            }).format(row.current_price)}`,
-            sortable: true,
-            right: false,
-            header: CustomHeader,
-        },
-        {
-            name: 'Duration',
-            selector: (row: Item) => row.duration ? row.duration : '',
-            sortable: true,
-            header: CustomHeader,
-        },
-        {
-            name: 'Publish',
-            cell: (row: Item) => (
-                <button
-                    className="p-2 bg-red-500 hover:bg-red-700 m-2 rounded-md text-white"
-                    onClick={() => handlePublishClick(row)}
-                >
-                    <FiCheck size={18}/>
-                </button>
-            ),
-            ignoreRowClick: true,
-            allowOverflow: true,
-            button: true,
-            header: CustomHeader,
-        },
-    ];
-
-    const paginationOptions = {
-        rowsPerPageText: 'Items per page:',
-        rangeSeparatorText: 'of',
-        selectAllRowsItem: true,
-        selectAllRowsItemText: 'All',
-        selectAllRowsItemSelectable: false,
-        perPage: 5,
-    };
-
     useEffect(() => {
         const intervalId = setInterval(() => {
-            fetchItems().then(data => {
-                console.log(data);
-                setItems(data);
-            });
+            fetchItems()
+                .then(data => {
+                    // console.log(data);
+                    setItems(data);
+                    setLoading(false); // Set loading to false when data is fetched
+                })
+                .catch(error => {
+                    console.error('Error fetching items:', error);
+                    setLoading(false); // Set loading to false even if there's an error
+                });
         }, 2000);
 
         return () => clearInterval(intervalId);
     }, []);
 
+    const columns = TableItemColums({handlePublishClick});
+
     return (
         <div className="my-4 p-4 border rounded-md w-[90%]">
-            <input
-                type="text"
-                placeholder="Search Your Item here..."
-                value={filterText}
-                onChange={e => setFilterText(e.target.value)}
-                className="p-2 w-60 border rounded border-gray-400"
-            />
-            <DataTable
-                title="Draft Items"
-                columns={columns}
-                data={filteredItems}
-                pagination
-                paginationPerPage={paginationOptions.perPage}
-                paginationRowsPerPageOptions={[5, 10, 15, 20]}
-                paginationComponentOptions={paginationOptions}
-            />
-            {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center">
-                    <div className="bg-white rounded-lg p-8 shadow-lg">
-                        <h3 className="text-lg font-medium mb-4">Bid {currentItem?.itemName}</h3>
-                        <div className="mb-4">
-                            <input
-                                type="text"
-                                value={bidPrice}
-                                onChange={(e) => setBidPrice(e.target.value)}
-                                placeholder="Bid price"
-                                className="w-full p-2 border rounded border-gray-400"
-                            />
-                        </div>
-                        <div className="flex justify-end">
-                            <button
-                                className="btn btn-primary mr-2"
-                                onClick={handleModalSubmit}
-                            >
-                                Submit
-                            </button>
-                            <button
-                                className="btn"
-                                onClick={handleModalClose}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
+            {loading ? (
+                <div className="flex items-center justify-center">
+                    <Spinner/> Loading...
                 </div>
-            )}
-
-            {showConfirmationModal && (
-                <div className="fixed inset-0 flex items-center justify-center">
-                    <div className="bg-white rounded-lg p-8 border border-gray-300">
-                        <div className="text-center">
-                            <h3 className="text-lg font-medium mb-4">
-                                Confirm Publishing : <br/>
-                                <span className="font-bold text-red-600">{currentItem?.itemName}</span>
-                            </h3>
+            ) : (
+                <>
+                    <input
+                        type="text"
+                        placeholder="Search Your Item here..."
+                        value={filterText}
+                        onChange={e => setFilterText(e.target.value)}
+                        className="p-2 w-60 border rounded border-gray-400 focus:outline-none"
+                    />
+                    <DataTable
+                        title="Draft Items"
+                        columns={columns}
+                        data={filteredItems}
+                        pagination
+                        paginationPerPage={paginationOptions.perPage}
+                        paginationRowsPerPageOptions={[5, 10, 15, 20]}
+                        paginationComponentOptions={paginationOptions}
+                        className="p-2 w-60 border rounded border-gray-100"
+                    />
+                    {showConfirmationModal && (
+                        <div className="fixed inset-0 flex items-center justify-center">
+                            <div className="bg-white rounded-lg p-8 border border-gray-300">
+                                <div className="text-center">
+                                    <h3 className="text-lg font-medium mb-4">
+                                        Confirm Publishing : <br/>
+                                        <span className="font-bold text-red-600">{currentItem?.itemName}</span>
+                                    </h3>
+                                </div>
+                                <p>Are you sure you want to publish this item?</p>
+                                <div className="flex space-x-4 my-2">
+                                    <input
+                                        type="datetime-local"
+                                        placeholder="Start Time"
+                                        value={startTime}
+                                        onChange={(e) => setStartTime(e.target.value)}
+                                        className="h-12 w-full rounded border border-gray-300 px-3 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                    />
+                                </div>
+                                <div className="flex space-x-4 my-2">
+                                    <input
+                                        type="datetime-local"
+                                        placeholder="End Time"
+                                        value={endTime}
+                                        onChange={(e) => setEndTime(e.target.value)}
+                                        className="h-12 w-full rounded border border-gray-300 px-3 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                    />
+                                </div>
+                                <div className="flex justify-end mt-6">
+                                    <button
+                                        className="mr-2 px-4 py-2 bg-blue-500 text-white rounded-md"
+                                        onClick={() => handleConfirmationModalPublish(currentItem, startTime, endTime)}
+                                    >
+                                        Publish
+                                    </button>
+                                    <button
+                                        className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md"
+                                        onClick={handleConfirmationModalClose}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <p>Are you sure you want to publish this item?</p>
-                        <div className="flex justify-end mt-6">
-                            <button
-                                className="mr-2 px-4 py-2 bg-blue-500 text-white rounded-md"
-                                onClick={() => handleConfirmationModalPublish(currentItem)}
-                            >
-                                Publish
-                            </button>
-                            <button
-                                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md"
-                                onClick={handleConfirmationModalClose}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                    )}
+                </>
             )}
         </div>
     );

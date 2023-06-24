@@ -7,6 +7,7 @@ import {useRouter} from "next/navigation";
 import { SignUpContext } from "@/lib/hook/SignUpContext";
 import { FaFileAlt, FaMoneyBillWave, FaSignOutAlt, FaUser } from 'react-icons/fa';
 import {useNavigationEvent} from "@/lib/hook/useNavigationEvent";
+import {RiDashboardLine} from "react-icons/ri";
 
 const AppBar = () => {
     const ref = useRef<HTMLDivElement | null>(null);
@@ -63,7 +64,7 @@ const AppBar = () => {
     useNavigationEvent(session, setBalance);
 
     return (
-        <header ref={ref} className="fixed top-0 z-50 w-full flex gap-4 p-2 bg-gray-200 border-b-[2px] border-gray-150">
+        <header ref={ref} className="fixed top-0 z-50 w-full flex gap-4 p-2 bg-gray-100 border-b-[2px] border-gray-150">
             <h3 className="font-black text-lg text-center ml-10">Auction App</h3>
             {session && session.user ? (
                 <div className="relative ml-auto mr-10">
@@ -79,7 +80,7 @@ const AppBar = () => {
                         <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl z-20">
                             <Link onClick={() => setIsOpen(false)} href="/dashboard" className="block px-4 py-2 text-sm capitalize text-gray-700 hover:bg-gray-200 hover:text-gray-600">
                                 <div className="flex items-center justify-start">
-                                    <FaFileAlt className="h-6 w-6 rounded-full border-2 border-gray-600 mr-2" />
+                                    <RiDashboardLine className="h-6 w-6 rounded-full border-2 border-gray-600 mr-2" />
                                     <span>Dashboard</span>
                                 </div>
                             </Link>

@@ -27,13 +27,15 @@ model Balance {
 }
 
 model Item {
-  id            Int     @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   itemName      String?
-  status        String  @default("draft")
-  current_price Int     @default(0)
-  bid_price     Int     @default(0)
-  duration      String  @default("1h3s")
-  published     Boolean @default(false)
-  author        User?   @relation(name: "ItemAuthor", fields: [itemId], references: [id])
+  status        String   @default("draft")
+  current_price Int      @default(0)
+  bid_price     Int      @default(0)
+  start_time    DateTime @default(now())
+  end_time      DateTime @default(now())
+  duration      String   @default("1h3s")
+  published     Boolean  @default(false)
+  author        User?    @relation(name: "ItemAuthor", fields: [itemId], references: [id])
   itemId        Int?
 }
