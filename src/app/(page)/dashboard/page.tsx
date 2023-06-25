@@ -3,12 +3,14 @@
 import React, { useState } from "react";
 import useRequireAuth from "@/lib/hook/useRequireAuth";
 import OnGoingTable from "@/components/tables/OnGoing";
+import Completed from "@/components/tables/Completed";
+
 
 const DashboardPage = () => {
     const { session, isLoading } = useRequireAuth();
     const [activeTab, setActiveTab] = useState('Ongoing');
 
-  
+
 
     return (
         <main className="flex min-h-screen flex-col items-left p-24">
@@ -23,17 +25,12 @@ const DashboardPage = () => {
                     className={`px-4 py-0.5 border-b-4 ${activeTab === 'Complete' ? 'font-bold border-blue-500' : 'border-transparent'}`}
                     onClick={() => setActiveTab('Complete')}
                 >
-                    Complete
+                    Completed
                 </button>
             </div>
             <div className="overflow-y-auto h-full">
                 {activeTab === 'Ongoing' && <OnGoingTable  />}
-                {activeTab === 'Complete' && (
-                    <div className="w-full bg-aliceblue p-4 mt-4 rounded-md shadow-md">
-                        <h1>Complete Content</h1>
-                        <p>This is a placeholder for your complete content.</p>
-                    </div>
-                )}
+                {activeTab === 'Complete' && <Completed />}
             </div>
         </main>
     );

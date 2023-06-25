@@ -1,5 +1,5 @@
-import AppBar from "@/components/navigation/AppBar";
 import "./globals.css";
+import AppBar from "@/components/navigation/AppBar";
 import Providers from "@/lib/hook/Providers";
 
 

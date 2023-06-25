@@ -26,10 +26,9 @@ export const GET = async (req: Request) => {
     const data = await prisma.item.findMany({
         where: {
             published: true,
-            status: 'publish'
+            status: 'completed' // Adjusted status
         },
         select: {
-            id: true,
             itemName: true,
             status: true,
             current_price: true,
@@ -62,41 +61,6 @@ export const GET = async (req: Request) => {
         };
     });
 
-
     return NextResponse.json(formattedData, {status: 200});
-}
-
-// POST method
-export const POST = async (req: Request) => {
-    const body: any = await req.json();
-
-    const user = await prisma?.user.findUnique({
-        where: {
-            id: body.userId
-        },
-        include: {
-            items: true  // include Item records in the response
-        }
-    });
-
-    if (!user) {
-        return NextResponse.json({error: "User not found"}, {status: 404});
-    }
-
-    // If Item doesn't exist, create a new Item
-    const Item = await prisma?.item.create({
-        data: {
-            itemName: body.itemName,
-            status: "draft",
-            current_price: body.startPrice,
-            bid_price: 0,
-            duration: "no-setup",
-            start_time: new Date(),
-            end_time: new Date(),
-            published: false,
-            itemId: user.id,
-        }
-    });
-    return NextResponse.json(Item, {status: 200});
 }
 
