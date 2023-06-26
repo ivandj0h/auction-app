@@ -38,30 +38,35 @@ const AppBar = () => {
         setShowSignUp(false);
     };
 
-    const fetchBalance = async () => {
-        try {
-            const response = await fetch("/api/balance", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ userId: session?.user?.id }), // Pass the user id here
-            });
-
-            const data = await response.json();
-
-            // Update the balance state
-            setBalance(data?.amount || 0);
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
-    useEffect(() => {
-        fetchBalance();
-    }, [session?.user?.id]);
 
     useNavigationEvent(session, setBalance);
+
+    useEffect(() => {
+        const fetchBalance = async () => {
+            try {
+                const response = await fetch("/api/balance", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ userId: session?.user?.id }),
+                });
+
+                const data = await response.json();
+
+                // Update the balance state
+                setBalance(data?.amount || 0);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchBalance();
+        const intervalId = setInterval(fetchBalance, 1000);
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [session?.user?.id]);
 
     return (
         <header ref={ref} className="fixed top-0 z-50 w-full flex gap-4 p-2 bg-gray-100 border-b-[2px] border-gray-150">
@@ -69,8 +74,8 @@ const AppBar = () => {
             {session && session.user ? (
                 <div className="relative ml-auto mr-10">
                     <div className="flex items-center">
-                        <p className="text-black mr-2">
-                            {session.user.name.toUpperCase()} (${balance})
+                        <p className="text-black mr-4">
+                            {session.user.name.toUpperCase()} - <span className="text-lg font-bold">${balance}</span>
                         </p>
                         <button onClick={() => setIsOpen(!isOpen)}>
                             <FaUser className="h-8 w-8 rounded-full border-2 border-gray-600" />

@@ -1,29 +1,58 @@
-import { verifyJwt } from "@/lib/token/jwt";
-import prisma from "@/lib/vendor/prisma";
+import { IncomingMessage } from 'http';
+import prisma from '@/lib/vendor/prisma';
+import { NextResponse } from 'next/server';
 
-export async function GET(request: Request, { params }: { params: { id: number } }) {
-  const accessToken = request.headers.get("authorization");
-  if (!accessToken || !verifyJwt(accessToken)) {
-    return new Response(
-      JSON.stringify({
-        error: "unauthorized",
-      }),
-      {
-        status: 401,
-      }
-    );
-  }
-  const userPosts = await prisma.item.findMany({
-    where: { itemId: +params.id },
-    include: {
-      author: {
-        select: {
-          email: true,
-          name: true,
+export async function GET(request: IncomingMessage, { params }: { params: { id: number } }) {
+  // const accessToken = request.headers.get("authorization");
+  // if (!accessToken || !verifyJwt(accessToken)) {
+  //   return new Response(
+  //     JSON.stringify({
+  //       error: "unauthorized",
+  //     }),
+  //     {
+  //       status: 401,
+  //     }
+  //   );
+  // }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: Number(params.id),
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        balance: {
+          select: {
+            amount: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  return new Response(JSON.stringify(userPosts));
+    if (!user) {
+      return new Response(
+          JSON.stringify({
+            error: 'user not found',
+          }),
+          {
+            status: 404,
+          }
+      );
+    }
+
+    return NextResponse.json(user, { status: 200 });
+  } catch (error) {
+    console.error('An error occurred while fetching user data:', error);
+    return new Response(
+        JSON.stringify({
+          error: 'An error occurred while fetching user data',
+        }),
+        {
+          status: 500,
+        }
+    );
+  }
 }

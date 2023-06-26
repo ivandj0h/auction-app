@@ -4,12 +4,13 @@ import { usePathname, useSearchParams } from 'next/navigation';
 export function useNavigationEvent(session: any, setBalance: any) {
     const pathname = usePathname();
     const searchParams = useSearchParams();
+    const id = session?.user?.id?.toString();
 
     useEffect(() => {
         const fetchBalance = async () => {
             try {
                 // Perform the API call to fetch the balance data
-                const response = await fetch("/api/balance", {
+                const response = await fetch(`/api/balance`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
