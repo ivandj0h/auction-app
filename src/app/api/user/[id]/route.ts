@@ -1,8 +1,7 @@
-import { IncomingMessage } from 'http';
 import prisma from '@/lib/vendor/prisma';
-import { NextResponse } from 'next/server';
+import {NextRequest, NextResponse} from 'next/server';
 
-export async function GET(request: IncomingMessage, { params }: { params: { id: number } }) {
+export async function GET(request: NextRequest, { params }: { params: { id: number } }) {
   // const accessToken = request.headers.get("authorization");
   // if (!accessToken || !verifyJwt(accessToken)) {
   //   return new Response(
