@@ -84,14 +84,20 @@ To use the application you have to `register` first, then you can `log in` to th
 
 - Login Page
 
-![Login](./public/assets/images/login.png)
+![Login](./public/assets/images/login_img.png)
 
 - Register Page
 
-![Register](./public/assets/images/register.png)
+![Register](./public/assets/images/register_img.png)
 
-- Dashboard Page  
-![Dashboard](./public/assets/images/dashboard.png)
+- Publish On Draft Page  
+![publish](./public/assets/images/publish_img.png)
+
+- Cek Balance Ok Before Bid   
+![Dashboard](./public/assets/images/balanceok_img.png)
+
+- Cek Balance Less Money Before Bid  
+![Dashboard](./public/assets/images/balanceless_img.png)
 
 ### Contribute
 [ivandjoh](https://linkedin.com/in/ivandjoh)
