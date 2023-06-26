@@ -14,7 +14,7 @@ const DepositPage = () => {
         if (isLoading) {
             setTimeout(() => {
                 setShowContent(true);
-            }, 3000);
+            }, 1000);
         }
     }, [isLoading]);
 
