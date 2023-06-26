@@ -9,7 +9,7 @@ async function updateCompletedStatus(): Promise<void> {
         const expiredItems = await prisma.item.findMany({
             where: {
                 end_time: { lte: currentDate },
-                status: { not: 'completed' },
+                status: 'published'
             },
         });
 
