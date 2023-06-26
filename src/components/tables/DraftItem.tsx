@@ -145,7 +145,7 @@ export default function DraftItem() {
                     console.error('Error fetching items:', error);
                     setLoading(false); // Set loading to false even if there's an error
                 });
-        }, 2000);
+        }, 1000);
 
         return () => clearInterval(intervalId);
     }, []);

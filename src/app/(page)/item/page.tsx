@@ -1,13 +1,11 @@
 "use client";
 
 import React, {useState} from "react";
-import useRequireAuth from "@/lib/hook/useRequireAuth";
 import ItemInputComponent from "@/components/item/ItemInputComponent";
 import DraftItem from "@/components/tables/DraftItem";
 import {AnimatePresence, motion} from "framer-motion";
 
 const ItemPage = () => {
-    const {session, isLoading} = useRequireAuth();
     const [isInputOpen, setIsInputOpen] = useState(false);
 
 
