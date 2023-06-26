@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {useBalanceContext} from "@/context/BalanceContext";
 
 async function fetchItems() {
     const res = await fetch("http://localhost:3000/api/items");
@@ -37,7 +38,7 @@ const OnGoingTable: React.FC = () => {
     const [lastBidTime, setLastBidTime] = useState<number | null>(null);
     const [bidButtonText, setBidButtonText] = useState("Submit Bid");
     const [isWaiting, setIsWaiting] = useState(false);
-
+    const { setBalanceAmount } = useBalanceContext();
 
 
     const { data: session, status: sessionStatus } = useSession();
@@ -59,7 +60,7 @@ const OnGoingTable: React.FC = () => {
 
                     // Logging item.id for each item
                     filteredData.forEach((item) => {
-                        console.log("Item ID:", item.id);
+                        // console.log("Item ID:", item.id);
                     });
                 })
                 .catch((error) => {
@@ -105,16 +106,29 @@ const OnGoingTable: React.FC = () => {
 
     const handleModalSubmit = async (itemId: string) => {
         if (session) {
-            console.log("Submitting bid for item ID:", itemId, "with price", bidPrice);
+            // Fetch user's current balance
+            const balanceResponse = await fetch(`/api/balance/${session.user?.id?.toString()}`);
+            if (!balanceResponse.ok) {
+                console.error("Error fetching balance:", balanceResponse.status, balanceResponse.statusText);
+                return;
+            }
 
-            const response = await fetch(`http://localhost:3000/api/bid/${itemId}`, {
-                method: "POST",
+            const jsonResponse = await balanceResponse.json();
+            const currentBalance = jsonResponse.balance;
+            // Calculate new balance amount
+            const newBalanceAmount = currentBalance - parseInt(bidPrice);
+            setBalanceAmount(newBalanceAmount);
+
+            // Update item's bid price and user's balance
+            const response = await fetch(`/api/bid/${itemId}`, {
+                method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    itemId: session.user?.id?.toString(),
-                    bidPrice: bidPrice,
+                    authorId: session.user?.id?.toString(),
+                    newBidPrice: parseInt(bidPrice),
+                    newBalanceAmount: parseInt(String(newBalanceAmount)), // Update this line
                 }),
             });
 
@@ -123,8 +137,8 @@ const OnGoingTable: React.FC = () => {
                 // You could handle error response here
             } else {
                 const data = await response.json(); // if your API returns JSON data
-                console.log("Bid submitted successfully, response data:", data);
                 // You could handle successful response here
+                toast.success("Bid submitted successfully", data);
             }
         } else {
             console.error("Session is null");
@@ -135,6 +149,7 @@ const OnGoingTable: React.FC = () => {
         setIsWaiting(true); // Set isWaiting to true after bid is submitted
     };
 
+
     const handleBidPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setBidPrice(e.target.value);
     };
@@ -144,7 +159,6 @@ const OnGoingTable: React.FC = () => {
 
         if (!bidPrice) {
             // Handle empty input value
-            console.log("Bid price is empty");
             toast.error("Bid price is empty");
             handleModalClose();
             return;
@@ -152,7 +166,6 @@ const OnGoingTable: React.FC = () => {
 
         // Assuming currentItem is an object that could potentially be null or undefined
         if (currentItem && currentItem.current_price) {
-            console.log("Submitting bid for", currentItem.current_price, "with price", enteredBidPrice);
 
             const currentTime = Date.now();
             const timeDifference = currentTime - (lastBidTime || 0);

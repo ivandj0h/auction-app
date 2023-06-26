@@ -1,6 +1,7 @@
 import "./globals.css";
 import AppBar from "@/components/navigation/AppBar";
 import Providers from "@/lib/hook/Providers";
+import {BalanceContextProvider} from "@/context/BalanceContext";
 
 
 export const metadata = {
@@ -13,8 +14,10 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
         <html lang="en" data-theme="light">
         <body>
         <Providers>
-            <AppBar/>
-            {children}
+            <BalanceContextProvider>
+                <AppBar/>
+                {children}
+            </BalanceContextProvider>
         </Providers>
         </body>
         </html>

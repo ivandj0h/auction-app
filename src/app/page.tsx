@@ -1,13 +1,13 @@
 import Home from "@/app/(page)/home/page";
 import {SignUpProvider} from "@/lib/hook/SignUpContext";
-import AppBar from "@/components/navigation/AppBar";
-
+import {startCronJob} from "@/lib/utils/cron";
 
 
 function App() {
+    // Start the cron job when the application starts
+    startCronJob();
     return (
         <SignUpProvider>
-            {/*<AppBar />*/}
             <Home />
         </SignUpProvider>
     );

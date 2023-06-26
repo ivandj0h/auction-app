@@ -25,8 +25,6 @@ export default function Completed() {
             await new Promise(resolve => setTimeout(resolve, 2000));
             fetchItems()
                 .then((data: Item[]) => {
-
-                    console.log(data);
                     const currentTime = new Date().getTime();
                     const filteredData = data.filter((item: Item) => {
                         const endTime = new Date(item.end_time).getTime();
